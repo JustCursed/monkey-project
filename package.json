@@ -1,0 +1,24 @@
+{
+  "name": "monkey-project",
+  "version": "1.0.0",
+  "description": "Learn project for monkeys",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustCursed/monkey-project.git"
+  },
+  "author": "JustCursed, Fairlak",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/JustCursed/monkey-project/issues"
+  },
+  "homepage": "https://github.com/JustCursed/monkey-project#readme",
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "surrealdb.js": "^1.0.0",
+    "surrealdb.node": "^1.0.0-beta.1"
+  }
+}
