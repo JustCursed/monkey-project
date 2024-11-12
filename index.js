@@ -1,20 +1,30 @@
-const client = require('./client.js').client;
+const { Events } = require('discord.js');
+const client = require('./client.js');
 
-client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}!`);
+client.once(Events.ClientReady, ctx => {
+	console.log(`Logged in as ${ctx.user.tag}!`);
 });
 
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isChatInputCommand()) return;
+client.on(Events.InteractionCreate, async ctx => {
+	const commandName = ctx.commandName;
+	const command = ctx.client.commands.get(commandName);
 
-	if (interaction.commandName === 'list') {
-		await require('./commands/list.js').run();
-	}
+	if (!ctx.isChatInputCommand() || !command) return;
 
-	if (interaction.commandName === 'poslatb') {
-		interaction.replay({ content: 'Secret Pong!', ephemeral: true });
+	try {
+		await command.execute(ctx);
+	} catch (err) {
+		ctx.replay({ content: 'Соррян, произошла ошибка', ephemeral: true });
 	}
 });
+
+client.on(Events.MessageCreate, async ctx => {
+	const commandName = ctx.content.split(' ')[0].slice(1);
+	const command = ctx.client.commands.get(commandName);
+	if (!ctx.content.startsWith('!') || !command) return;
+
+	await command.run.execute(ctx);
+})
 
 client.login('');
 
