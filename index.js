@@ -1,32 +1,53 @@
-const { Events } = require('discord.js');
-const client = require('./client.js');
-
-client.once(Events.ClientReady, ctx => {
-	console.log(`Logged in as ${ctx.user.tag}!`);
+const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js');
+const { readdir } = require('fs/promises');
+const { commandsDir, eventsDir, token } = require('./config.json');
+const intent = GatewayIntentBits;
+const rest = new REST({ version: '10' }).setToken(token);
+const client = new Client({
+	intents: [
+		intent.Guilds,
+		intent.GuildBans,
+		intent.GuildMessages,
+		intent.MessageContent,
+		intent.DirectMessages,
+	],
 });
 
-client.on(Events.InteractionCreate, async ctx => {
-	const commandName = ctx.commandName;
-	const command = ctx.client.commands.get(commandName);
+client.commands = new Collection;
+client.db = {
+	data: {},
+	getList: num => 0 || 1 ? 0 : 10 * (num - 1),
+	sliceResult: (list, num) => list.slice(this.getList(num), this.getList(num) + 10),
+	getAniList: async (id, num) => this.sliceResult(this.db.data[id], num),
+	getByName: async (id, name, num) =>
+		this.sliceResult(this.db.data[id].filter(el => el.name.includes(name)), num),
+	addAnime: async (id, link) => {
+		this.db.data[id] = [...this.db.data[id], {
+			name: link, // await (await fetch(`http://localhost/monkey/get/name`, { headers: { aniLink: link } })).text()
+			time: new Date().getTime(),
+			link: link,
+		}];
+	},
+};
 
-	if (!ctx.isChatInputCommand() || !command) return;
+(async () => {
+	const events = await readdir(eventsDir);
+	const commands = (await readdir(commandsDir))
+		.map(filename => filename.slice(0, -3));
 
-	try {
-		await command.execute(ctx);
-	} catch (err) {
-		ctx.replay({ content: 'Соррян, произошла ошибка', ephemeral: true });
-	}
-});
+	for (const event of events)
+		await require(`${eventsDir}/${event}`)(client);
 
-client.on(Events.MessageCreate, async ctx => {
-	const commandName = ctx.content.split(' ')[0].slice(1);
-	const command = ctx.client.commands.get(commandName);
-	if (!ctx.content.startsWith('!') || !command) return;
+	for (const command of commands)
+		client.commands.set(command, require(`${commandsDir}/${command}.js`));
 
-	await command.run.execute(ctx);
-})
+	await rest.put(
+		Routes.applicationGuildCommands('822915321459245097', '905193118419283979'),
+		{ body: [...client.commands.map(cmd => cmd.data)] },
+	);
+})();
 
-client.login('');
+client.login(token);
 
 /*
 let boxWithBeer = [1, 2, 3, 4, 5];

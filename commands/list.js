@@ -1,8 +1,14 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
 
 const command = new SlashCommandBuilder()
 	.setName('list')
-	.setDescription('your anime list');
+	.setDescription('your anime list')
+	.setContexts(InteractionContextType.BotDM, InteractionContextType.Guild)
+	.addIntegerOption(option =>
+		option.setName('number')
+			.setDescription('Number of list')
+			.setMinValue(1)
+	);
 
 const embed = new EmbedBuilder()
 	.setColor(0x0099FF)
@@ -10,10 +16,12 @@ const embed = new EmbedBuilder()
 	.setAuthor({ name: 'Monkey team', url: 'https://github.com/JustCursed/monkey-project' })
 	.setTimestamp();
 
-exports.run = {
+module.exports = {
 	data: command,
 	execute: async ctx => {
-		ctx.channel.send({ embeds: [embed] });
+		// await ctx.reply({ embeds: [embed] });
+		console.log(ctx)
+		await ctx.reply('dawdw')
 	}
 };
 
