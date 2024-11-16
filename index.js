@@ -16,13 +16,17 @@ const client = new Client({
 client.commands = new Collection;
 client.db = {
 	data: {},
-	getList: num => 0 || 1 ? 0 : 10 * (num - 1),
-	sliceResult: (list, num) => list.slice(this.getList(num), this.getList(num) + 10),
-	getAniList: async (id, num) => this.sliceResult(this.db.data[id], num),
-	getByName: async (id, name, num) =>
-		this.sliceResult(this.db.data[id].filter(el => el.name.includes(name)), num),
-	addAnime: async (id, link) => {
-		this.db.data[id] = [...this.db.data[id], {
+	sliceResult(list, num) {
+		return list.slice(num * 10, (num + 1) * 10);
+	},
+	async getAniList(id, num) {
+		return this.sliceResult(this.data[id], num);
+	},
+	async getByName(id, name, num) {
+		return this.sliceResult(this.data[id].filter(el => el.name.includes(name)), num);
+	},
+	async addAnime(id, link) {
+		this.data[id] = [...this.data[id] ?? [], {
 			name: link, // await (await fetch(`http://localhost/monkey/get/name`, { headers: { aniLink: link } })).text()
 			time: new Date().getTime(),
 			link: link,

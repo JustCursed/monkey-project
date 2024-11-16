@@ -1,12 +1,16 @@
 const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
 
 const command = new SlashCommandBuilder()
-	.setName('list')
-	.setDescription('your anime list')
+	.setName('find')
+	.setDescription('find your watched anime')
 	.setContexts(InteractionContextType.BotDM, InteractionContextType.Guild)
-	.addIntegerOption(option =>
-		option.setName('page')
-			.setDescription('Page of list')
+	.addStringOption(option =>
+		option.setName('name')
+			.setDescription('anime name')
+	)
+	.addIntegerOption(opt =>
+		opt.setName('page')
+			.setDescription('page anime')
 			.setMinValue(1)
 	);
 
@@ -20,7 +24,7 @@ module.exports = {
 	data: command,
 	execute: async ctx => {
 		// await ctx.reply({ embeds: [embed] });
-		console.log(await ctx.client.db.getAniList(ctx.user.id, ctx.options.getInteger('page') ?? 1));
+		console.log(await ctx.client.db.getAniList(ctx.user.id, ctx.options.getInteger('number') ?? 1));
 		await ctx.reply('dwad');
 	}
 };
