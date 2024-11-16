@@ -8,7 +8,6 @@ const command = new SlashCommandBuilder()
 		.setDescription("Page number to view your anime")
 	);
 
-
 module.exports = {
     data: command,
     execute: async ctx => {
@@ -17,10 +16,11 @@ module.exports = {
 			.setTitle('Your wached anime')
 			.setAuthor({ name: 'Monkey team', url: 'https://github.com/JustCursed/monkey-project' })
 			.setThumbnail(ctx.user.avatarURL())
-			.setTimestamp()
-		const userId = ctx.user.id
+			.setTimestamp();	
+
+		const userId = ctx.user.id;
 		const page = ctx.options.getInteger('page') ?? 1;
-		const aniList = await ctx.client.db.getAniList(userId, page)
+		const aniList = await ctx.client.db.getAniList(userId, page);
 		aniList.forEach(anime => embed.addFields({ name: anime.name, value: new Date(anime.time).toISOString() }) );
         ctx.reply({ embeds: [embed], ephemeral: true });
     }
