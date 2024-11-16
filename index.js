@@ -16,21 +16,26 @@ const client = new Client({
 client.commands = new Collection;
 client.db = {
 	data: {},
-	sliceResult(list, num) {
-		return list.slice(num * 10, (num + 1) * 10);
+	sliceResult(list, page) {
+		return list.slice((page - 1) * 10, page * 10);
 	},
-	async getAniList(id, num) {
-		return this.sliceResult(this.data[id], num);
+	async getAniList(id, page) {
+		return this.sliceResult(this.data[id] ?? [], page);
 	},
-	async getByName(id, name, num) {
-		return this.sliceResult(this.data[id].filter(el => el.name.includes(name)), num);
+	async getByName(id, name, page) {
+		return this.sliceResult(this.data[id].filter(el => el.name.includes(name)), page);
 	},
 	async addAnime(id, link) {
+		// const name = await (await fetch(`http://localhost/monkey/get/name`, { headers: { aniLink: link } })).text();
+		// if (name === 'not found') return false;
+
 		this.data[id] = [...this.data[id] ?? [], {
-			name: link, // await (await fetch(`http://localhost/monkey/get/name`, { headers: { aniLink: link } })).text()
+			name: link,
 			time: new Date().getTime(),
 			link: link,
 		}];
+
+		return true;
 	},
 };
 
