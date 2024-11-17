@@ -26,7 +26,7 @@ client.db = {
 		return this.sliceResult(this.data[id].filter(ani => ani.name.includes(name)), page);
 	},
 	async addAnime(id, link) {
-		const name = await (await fetch('http://195.208.172.233/monkey/get/name', { headers: { aniLink: link } })).text();
+		const name = (await (await fetch('http://195.208.172.233:8888/get/name', { headers: { aniLink: link } })).text()).slice(1, -1);
 		if (name === 'not found') return false;
 
 		this.data[id] = [...this.data[id] ?? [], {

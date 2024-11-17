@@ -13,7 +13,9 @@ const command = new SlashCommandBuilder()
 module.exports = {
 	data: command,
 	execute: async ctx => {
-		await ctx.client.db.addAnime(ctx.user.id, ctx.options.getString('link'));
-		await ctx.reply({ content: 'Аниме успешно добавлено в список просмотренных!', ephemeral: true });
+		if (await ctx.client.db.addAnime(ctx.user.id, ctx.options.getString('link')))
+			await ctx.reply({ content: 'Аниме успешно добавлено в список просмотренных!', ephemeral: true });
+		else
+			await ctx.reply({ content: 'На странице название аниме не было найдено', ephemeral: true });
 	}
 };
