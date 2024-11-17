@@ -7,6 +7,7 @@ const command = new SlashCommandBuilder()
 	.addStringOption(option =>
 		option.setName('name')
 			.setDescription('anime name')
+			.setRequired(true)
 	)
 	.addIntegerOption(opt =>
 		opt.setName('page')
@@ -14,17 +15,18 @@ const command = new SlashCommandBuilder()
 			.setMinValue(1)
 	);
 
-const embed = new EmbedBuilder()
-	.setColor(0x0099FF)
-	.setTitle('Your watched anime')
-	.setAuthor({ name: 'Monkey team', url: 'https://github.com/JustCursed/monkey-project' })
-	.setTimestamp();
-
 module.exports = {
 	data: command,
 	execute: async ctx => {
-		// await ctx.reply({ embeds: [embed] });
-		console.log(await ctx.client.db.getAniList(ctx.user.id, ctx.options.getInteger('number') ?? 1));
-		await ctx.reply('dwad');
+		const embed = new EmbedBuilder()
+			.setColor(0x0099FF)
+			.setTitle('Your watched anime')
+			.setAuthor({ name: 'Monkey team', url: 'https://github.com/JustCursed/monkey-project' })
+			.setTimestamp();
+
+		const aniList = await ctx.client.db.getByName(ctx.user.id, ctx.options.getString('name'), ctx.options.getInteger('page') ?? 1);
+		aniList.forEach(anime => embed.addFields({ name: anime.name, value: new Date(anime.time).toISOString() }))
+
+		await ctx.reply({ embeds: [embed], ephemeral: true });
 	}
 };

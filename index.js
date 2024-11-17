@@ -23,14 +23,14 @@ client.db = {
 		return this.sliceResult(this.data[id] ?? [], page);
 	},
 	async getByName(id, name, page) {
-		return this.sliceResult(this.data[id].filter(el => el.name.includes(name)), page);
+		return this.sliceResult(this.data[id].filter(ani => ani.name.includes(name)), page);
 	},
 	async addAnime(id, link) {
-		// const name = await (await fetch(`http://localhost/monkey/get/name`, { headers: { aniLink: link } })).text();
-		// if (name === 'not found') return false;
+		const name = await (await fetch('http://195.208.172.233/monkey/get/name', { headers: { aniLink: link } })).text();
+		if (name === 'not found') return false;
 
 		this.data[id] = [...this.data[id] ?? [], {
-			name: link,
+			name: name,
 			time: new Date().getTime(),
 			link: link,
 		}];
@@ -57,36 +57,3 @@ client.db = {
 })();
 
 client.login(token);
-
-/*
-let boxWithBeer = [1, 2, 3, 4, 5];
-
-const dionis = {
-	alkogol: 90,
-	takeBeer: () => {
-		boxWithBeer.pop();
-	},
-	giveBeer: (type, amount) => {
-		if (type === 'craft') {
-			console.log('пошёл нахуй моё');
-			return;
-		} else if (type === 'filter') {
-			console.log('держи, друг мой! всё для тебя!');
-		} else {
-			console.log('я не знаю такого');
-			return;
-		}
-
-		for (let i = 0; i < amount; i++) {
-			this.takeBeer();
-		}
-	}
-};
-
-dionis.giveBeer('craft', 2);
-dionis.giveBeer('filter', 5);
-
-const tet = (type, amount) => {
-
-};
-*/
