@@ -22,6 +22,7 @@ module.exports = {
 			.setColor(0x0099FF)
 			.setTitle('Your watched anime')
 			.setAuthor({ name: 'Monkey team', url: 'https://github.com/JustCursed/monkey-project' })
+			.setThumbnail(ctx.user.avatarURL())
 			.setTimestamp();
 
 		const aniList = await ctx.client.db.getByName(ctx.user.id, ctx.options.getString('name'), ctx.options.getInteger('page') ?? 1);
